@@ -1,0 +1,162 @@
+REPOSITORIOS CON GIT Y GITHUB	
+
+commits: son los puntos en el tiempo. 
+
+historial de cambios: un conjunto de puntos formando una línea
+
+log: es una serie de puntos ordenados cronológicamente donde cada 
+uno de estos puntos representa un avance con respecto al anterior.
+
+staging area(area de ensayo): es un lugar donde pones las partes de tu progreso que queres guardar.
+
+
+1) crear carpeta bici
+
+2) inicializo git en la terminal bash de VSC:
+git init
+
+3) configuro el usuario del proyecto
+git config --global user.name "Juan"
+git config --global user.email "juan@gmail.com"
+
+
+Para verificar la info ingresada:
+git config --global user.email
+(e informa juan@gmail.com)
+
+4) agrega a la carpeta bici el archivo primera_llanta.txt
+y hacemos 
+git status 
+(indica q archivos se agregaron, modificaron o eliminaron)
+
+5) movemos el cambio hecho al stage area 
+git add primera_llanta.txt
+(aparece la letra A junto al nombre de archivo de "agregado")
+
+
+Luego con git status vemos q el archivo esta en verde(xq esta en el stage area)
+sino, estaria en rojo.
+
+
+6)agregamos segunda_llanta.txt
+
+Si hiciera un commit, solo se guardaria el primer archivo(xq esta en el stage area)
+git commit -m "primera_llanta"
+
+Luego, al hacer
+git status
+solo veria el ultimo archivo y no el primero ya que paso del stage area al commit
+
+7) para ver un commit
+git log
+muestra el codigo hash, autor, fecha y mensaje del commit 
+
+Para ver un commit de una forma mas compacta:
+git log --oneline
+
+
+8) Al agregar mas commits, estos se muestran del mas reciente al mas antiguo(orden cronologico)
+
+9) si agrego texto a primera_llanta.txt y hago
+git diff
+veo lo que se agrego en ese archivo.
+
+
+10) paso al stage area este archivo primera_llanta.txt(con las lineas agregadas)
+git add primera_llanta.txt
+
+
+11)para quitar un archivo del stage area
+git restored --staged primera_llanta.txt
+
+Nota: para agregar todos los archivos al stage area
+git add .
+
+12) moverse entre commits(entre fotografias o versiones)
+git checkout hash_commit
+y vuelvo a un momento anterior del proyecto
+
+
+13) para volver al ultimo commit
+git ckeckout master
+
+
+14) para ver diferencias entre 2 commits
+git diff hash1_commit  hash2_commit
+
+
+15) si modifique un archivo que no commitie y lo quiero volver
+a su estado anterior sin usar ctrl+z hago:
+git restore primera_llanta.txt
+
+o a todos los archivos a los q se les hizo cambios:
+git restore .
+
+
+RAMAS
+me indica en que rama estoy ahora
+git branch
+
+para crear una nueva rama
+git branch segunda
+
+si vuelvo a escribir 
+git branch
+ahora aparecen ambas ramas
+
+para moverme entre ramas
+git checkout segunda
+o
+git switch segunda
+
+ahora hago cambios en segunda_llanta.txt y lo guardo en un commit
+git add segunda_llanta.txt
+git commit -m "agregar linea en segunda rama"
+
+veo los cambios con
+git log --oneline
+
+alli veo q master llega hasta un determinado historial de cambios 
+y luego sigue segunda con el ultimo commit.
+
+unir ramas es llevar los commit de una rama a la otra rama
+
+me paro en la rama master ya que quiero por ejemplo llevar los cambios de
+la rama segunda a la rama master
+
+git switch master
+git merge segunda
+
+se abre el bean para editar un mensaje al merge, el cual genera 
+un nuevo commit
+
+para ver en forma grafica 
+git log --oneline --graph	
+
+Para eliminar una rama
+git branch -d segunda
+
+
+
+GITHUB
+crear cuenta gitub y crear repo
+https://github.com/cfpit/Fondo.git
+
+para ver los remotos q tengo
+git remote
+
+para agregar un nuevo remoto
+git remote add origin <url>
+
+para subir los cambios
+git push origin master
+origin: es el remoto y master es la rama del repo local q deseo subir al remoto
+
+github pedira pedira credenciales a VSC 
+
+luego, hacer refresh en github y veremos subido al remoto mi repo local
+
+Ahora vamos a hacer cambios en el remoto y bajarlos al local.
+para eso, agrego readme al repo remoto y hora hacemos
+git pull origin master
+y vemos en el repo local como se agrego el readme.
