@@ -1,0 +1,21 @@
+Actualiza tu repositorio local:
+git fetch origin
+
+Intenta hacer un push con la opción --force:
+git push --force origin master
+
+Si sigue sin funcionar, verifica los permisos:
+git config --list | grep credential.helper
+
+Si no ves ninguna salida, agrega:
+git config --global credential.helper store
+
+Intenta hacer el push nuevamente:
+git push origin master
+
+Si aún hay problemas, puedes intentar eliminar y volver a agregar la remota:
+git remote remove origin
+
+git remote add origin https://github.com/tu_usuario/tu_repositorio.git
+
+git push -u origin master
