@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guía Completa: Git y GitHub - De Local a Remoto</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #334155;
+      --primary: #1d4ed8;
+      --primary-light: #eff6ff;
+      --git-orange: #c2410c;
+      --git-orange-light: #fff7ed;
+      --github-dark: #0f172a;
+      --success: #15803d;
+      --success-light: #f0fdf4;
+      --warning: #a16207;
+      --warning-light: #fefce8;
+      --danger: #b91c1c;
+      --danger-light: #fef2f2;
+      /* Código con fondo clarito de alto contraste para proyector */
+      --code-bg: #f1f5f9;
+      --code-border: #cbd5e1;
+      --code-text: #0f172a;
+      --font-main: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-main);
+      line-height: 1.6;
+      padding: 2.5rem 1.5rem;
+      font-size: 16px;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      border-left: 8px solid var(--git-orange);
+    }
+
+    .badge-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.3rem 0.8rem;
+      border-radius: 9999px;
+    }
+
+    .badge-git { background: var(--git-orange-light); color: var(--git-orange); border: 1px solid #fed7aa; }
+    .badge-github { background: #f1f5f9; color: var(--github-dark); border: 1px solid #cbd5e1; }
+    .badge-proj { background: #f0fdf4; color: var(--success); border: 1px solid #bbf7d0; }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 0.75rem;
+    }
+
+    .subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+    }
+
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text);
+      margin: 2.5rem 0 1.25rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 3px solid var(--border);
+    }
+
+    .section-title.orange { border-color: var(--git-orange); }
+    .section-title.blue { border-color: var(--primary); }
+    .section-title.purple { border-color: #7c3aed; }
+
+    .concepts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .concept-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    }
+
+    .concept-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--git-orange);
+    }
+
+    .concept-card p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .step-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+      position: relative;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 800;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .step-header h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .step-card p, .step-card li {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .step-card ul, .step-card ol {
+      margin-left: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Bloques de código con fondo claro y letra oscura legible */
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      border: 1px solid var(--code-border);
+      border-left: 6px solid var(--git-orange);
+      overflow-x: auto;
+      margin: 0.75rem 0;
+      font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
+      font-size: 1.05rem;
+      font-weight: 700;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    pre code {
+      color: var(--code-text);
+      background: transparent;
+      padding: 0;
+      font-weight: 700;
+    }
+
+    code.inline {
+      background: var(--code-bg);
+      color: #0f172a;
+      font-weight: 700;
+      padding: 0.2rem 0.45rem;
+      border-radius: 4px;
+      border: 1px solid var(--code-border);
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.9em;
+    }
+
+    .alert {
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      margin: 1rem 0;
+      font-size: 1rem;
+    }
+
+    .alert-info {
+      background: var(--primary-light);
+      border-left: 5px solid var(--primary);
+      color: #1e3a8a;
+    }
+
+    .alert-warning {
+      background: var(--warning-light);
+      border-left: 5px solid var(--warning);
+      color: #713f12;
+    }
+
+    .alert-danger {
+      background: var(--danger-light);
+      border-left: 5px solid var(--danger);
+      color: #7f1d1d;
+    }
+
+    .alert-success {
+      background: var(--success-light);
+      border-left: 5px solid var(--success);
+      color: #14532d;
+    }
+
+    .error-terminal {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      border-left: 6px solid #ef4444;
+      padding: 0.85rem 1.1rem;
+      border-radius: 6px;
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 0.75rem 0;
+      line-height: 1.5;
+    }
+
+    .tag-green { color: var(--success); font-weight: bold; }
+    .tag-red { color: var(--danger); font-weight: bold; }
+
+    @media print {
+      body { padding: 0; background: #fff; }
+      .step-card { page-break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <header>
+      <div class="badge-bar">
+        <span class="badge badge-git">Git Local</span>
+        <span class="badge badge-github">GitHub Remoto</span>
+        <span class="badge badge-proj">Modo Proyección (Fondo Claro)</span>
+      </div>
+      <h1>REPOSITORIOS CON GIT Y GITHUB</h1>
+      <p class="subtitle">Guía integral paso a paso: conceptos fundamentales, trabajo local, gestión de ramas, subida remota y solución de autenticación.</p>
+    </header>
+
+    <h2 class="section-title orange">📌 Conceptos Clave de Git</h2>
+    <div class="concepts-grid">
+      <div class="concept-card">
+        <h3>📍 Commits</h3>
+        <p>Son los <strong>puntos en el tiempo</strong> (fotografías del estado de tus archivos). Cada commit guarda un avance concreto y seguro.</p>
+      </div>
+      <div class="concept-card">
+        <h3>📈 Historial de cambios</h3>
+        <p>Un <strong>conjunto de puntos</strong> formando una línea secuencial e inmutable a lo largo del desarrollo.</p>
+      </div>
+      <div class="concept-card">
+        <h3>📜 Log</h3>
+        <p>Una <strong>serie de puntos ordenados cronológicamente</strong> donde cada uno representa un avance con respecto al anterior.</p>
+      </div>
+      <div class="concept-card">
+        <h3>📦 Staging Area</h3>
+        <p><strong>Área de ensayo</strong>: el lugar intermedio donde preparas exactamente las partes y archivos de tu progreso que deseas guardar.</p>
+      </div>
+    </div>
+
+    <h2 class="section-title blue">🛠️ Flujo de Trabajo Local (Paso a Paso)</h2>
+
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge">1</span>
+        <h3>Crear carpeta del proyecto</h3>
+      </div>
+      <p>Creamos y nos ubicamos en la carpeta de trabajo <code class="inline">bici</code>.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge">2</span>
+        <h3>Inicializar Git en la terminal (Bash de VS Code)</h3>
+      </div>
+      <p>Crea el repositorio local (la carpeta oculta <code class="inline">.git</code>):</p>
+      <pre><code>git init</code></pre>
+    </div>
+
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge">3</span>
+        <h3>Configurar usuario del proyecto</h3>
+      </div>
+      <p>Establece tu nombre y correo para firmar cada commit que realices:</p>
+      <pre><code>git config --global user.name "Juan"
+git config --global user.email "juan@gmail.com"</code></pre>
+      <p>Para verificar la información ingresada:</p>
+      <pre><code>git config --global user.email</code></pre>
+      <div class="alert alert-info">Informa: <code class="inline">juan@gmail.com</code></div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge">4</span>
+        <h3>Crear archivo y consultar estado</h3>
+      </div>
+      <p>Agrega a la carpeta bici el archivo <code class="inline">primera_llanta.txt</code> y ejecuta:</p>
+      <pre><code>git status</code></pre>
+      <p>Indica qué archivos se agregaron, modificaron o eliminaron (aparecerá en <span class="tag-red">rojo</span> como archivo sin seguimiento / <em>untracked</em>).</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge">5</span>
+        <h3>Mover cambios al Staging Area (Área de ensayo)</h3>
+      </div>
+      <pre><code>git add primera_llanta.txt</code></pre>
+      <p>En el explorador de VS Code aparece la letra <strong>A</strong> (Added / Agregado).</p>
+      <p>Con <code class="inline">git status</code> ahora se muestra en <span class="tag-green">verde</span> (está preparado para el commit). Si no estuviera en stage, estaría en <span class="tag-red">rojo</span>.</p>
+      <div class="alert alert-warning">
+        <strong>Nota:</strong> Si quieres sacar el archivo del stage area y volver al principio:
+        <pre style="margin-top:0.5rem; border-left-color: var(--warning);"><code>git rm --cached primera_llanta.txt</code></pre>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge">6</span>
+        <h3>Agregar segundo archivo y crear el primer Commit</h3>
+      </div>
+      <p>Creamos <code class="inline">segunda_llanta.txt</code> en la carpeta. Si hacemos un commit en este momento, solo se guardará el primer archivo (porque es el único en el Staging Area):</p>
+      <pre><code>git commit -m "primera_llanta"</code></pre>
+      <p>Luego, al hacer <code class="inline">git status</code>, solo verías el archivo <code class="inline">segunda_llanta.txt</code> pendiente, ya que el primero pasó formalmente del staging area al historial de commits.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge">7-8</span>
+        <h3>Visualizar el historial de Commits (Log)</h3>
+      </div>
+      <p>Muestra el código hash identificador, autor, fecha y mensaje del commit:</p>
+      <pre><code>git log</code></pre>
+      <p>Para ver el historial de forma más compacta (un commit por línea):</p>
+      <pre><code>git log --oneline</code></pre>
+      <div class="alert alert-info">
+        <strong>Orden cronológico:</strong> Al agregar más commits, estos se listan siempre del más reciente al más antiguo.
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge">9-10</span>
+        <h3>Modificaciones, inspección con Diff y Staging</h3>
+      </div>
+      <p>Si agregas texto dentro de <code class="inline">primera_llanta.txt</code>, inspecciona exactamente qué líneas cambiaron:</p>
+      <pre><code>git diff</code></pre>
+      <p>Para volver a subir estas modificaciones al staging area:</p>
+      <pre><code>git add primera_llanta.txt</code></pre>
+    </div>
+
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge">11</span>
+        <h3>Quitar archivos del Staging Area y agregar todo</h3>
+      </div>
+      <p>Forma moderna de quitar un archivo del stage area sin perder los cambios del archivo:</p>
+      <pre><code>git restore --staged primera_llanta.txt</code></pre>
+      <div class="alert alert-info">
+        <strong>Atajo para agregar todo:</strong> Para pasar todos los archivos nuevos y modificados juntos al staging area:
+        <pre style="margin-top:0.5rem; border-left-color: var(--primary);"><code>git add .</code></pre>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge">12-13</span>
+        <h3>Moverse en el tiempo (Viajar entre Commits)</h3>
+      </div>
+      <p>Para viajar a una versión anterior (fotografía) usando el hash de un commit:</p>
+      <pre><code>git checkout &lt;hash_commit&gt;</code></pre>
+      <p>Para regresar a la actualidad (último commit de la rama principal):</p>
+      <pre><code>git checkout master
+# o de forma moderna:
+git switch master</code></pre>
+    </div>
+
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge">14-15</span>
+        <h3>Comparar commits y descartar cambios locales</h3>
+      </div>
+      <p>Ver las diferencias exactas entre dos momentos del historial:</p>
+      <pre><code>git diff &lt;hash1_commit&gt; &lt;hash2_commit&gt;</code></pre>
+      <p>Si modificaste un archivo que aún no commiteaste y quieres revertirlo a su estado original (deshacer cambios sin usar Ctrl+Z):</p>
+      <pre><code>git restore primera_llanta.txt</code></pre>
+      <p>O para descartar cambios no guardados en <strong>todos</strong> los archivos a la vez:</p>
+      <pre><code>git restore .</code></pre>
+    </div>
+
+    <h2 class="section-title purple">🌿 Trabajo con Ramas (Branches)</h2>
+
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge">🌿</span>
+        <h3>Creación, navegación y fusión de ramas</h3>
+      </div>
+      
+      <p><strong>1. Ver en qué rama estamos actualmente:</strong></p>
+      <pre><code>git branch</code></pre>
+
+      <p><strong>2. Crear una nueva rama:</strong></p>
+      <pre><code>git branch segunda</code></pre>
+
+      <p>Al volver a escribir <code class="inline">git branch</code> ahora aparecerán ambas ramas (<code class="inline">master</code> y <code class="inline">segunda</code>).</p>
+
+      <p><strong>3. Cambiar a la nueva rama:</strong></p>
+      <pre><code>git checkout segunda
+# o con el comando moderno:
+git switch segunda</code></pre>
+
+      <p><strong>4. Hacer cambios en la rama secundaria y guardarlos:</strong></p>
+      <p>Modificamos <code class="inline">segunda_llanta.txt</code> y creamos un commit exclusivo de esta rama:</p>
+      <pre><code>git add segunda_llanta.txt
+git commit -m "agregar linea en segunda rama"</code></pre>
+
+      <p>Revisamos con <code class="inline">git log --oneline</code>: observamos que <code class="inline">master</code> llega hasta un determinado punto del historial y <code class="inline">segunda</code> continúa con el nuevo commit.</p>
+
+      <p><strong>5. Unir ramas (Merge):</strong></p>
+      <p>Unir ramas es llevar los commits de una rama a otra. Para traer los cambios de <code class="inline">segunda</code> hacia <code class="inline">master</code>, primero nos posicionamos en <code class="inline">master</code>:</p>
+      <pre><code>git switch master
+git merge segunda</code></pre>
+      <p>Se abre el editor para confirmar el mensaje de unión, el cual genera un nuevo commit de merge.</p>
+
+      <p><strong>6. Ver el historial de forma gráfica:</strong></p>
+      <pre><code>git log --oneline --graph</code></pre>
+
+      <p><strong>7. Eliminar la rama que ya fue integrada:</strong></p>
+      <pre><code>git branch -d segunda</code></pre>
+    </div>
+
+    <h2 class="section-title orange">☁️ Subida a GitHub y Repositorio Remoto</h2>
+
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge">☁️</span>
+        <h3>Conectar con GitHub y Push</h3>
+      </div>
+      <p><strong>1. Crear cuenta y repositorio en GitHub:</strong></p>
+      <p>Creamos el repositorio en GitHub (ejemplo: <code class="inline">https://github.com/cfpit/Fondo.git</code>).</p>
+
+      <p><strong>2. Ver remotos configurados:</strong></p>
+      <pre><code>git remote</code></pre>
+
+      <p><strong>3. Vincular el repositorio remoto:</strong></p>
+      <pre><code>git remote add origin https://github.com/cfpit/Fondo.git</code></pre>
+
+      <p><strong>4. Subir los cambios:</strong></p>
+      <pre><code>git push origin master</code></pre>
+      <div class="alert alert-info">
+        <strong>¿Qué significa?</strong> <code class="inline">origin</code> es el alias del servidor remoto en GitHub y <code class="inline">master</code> es la rama de nuestro repositorio local que deseamos enviar.
+      </div>
+    </div>
+
+    <div class="step-card" style="border: 2px solid #ef4444;">
+      <div class="step-header">
+        <span class="step-badge" style="background: var(--danger);">!</span>
+        <h3 style="color: var(--danger);">Solución: Error de Autenticación al hacer Push</h3>
+      </div>
+      
+      <div class="error-terminal">
+        remote: Invalid username or token. Password authentication is not supported for Git operations.<br>
+        fatal: Authentication failed for 'https://github.com/cfpit/Fondo.git/'
+      </div>
+
+      <p><strong>Causa:</strong> GitHub no admite tu contraseña normal de inicio de sesión para operaciones de Git. Requiere un <strong>Personal Access Token (PAT)</strong>.</p>
+
+      <ol>
+        <li>
+          <strong>Generar el Token en GitHub:</strong><br>
+          Ve a tu perfil en GitHub &rarr; <strong>Settings</strong> &rarr; <strong>Developer Settings</strong> &rarr; <strong>Personal access tokens</strong> &rarr; <strong>Tokens (classic)</strong> &rarr; <strong>Generate new token (classic)</strong>.<br>
+          Asigna un nombre, marca el permiso <strong><code>repo</code></strong> y genera el token. <strong>Copia el código generado (<code class="inline">ghp_...</code>)</strong>.
+        </li>
+        <li>
+          <strong>Borrar credenciales viejas en Windows:</strong><br>
+          Abre el menú Inicio &rarr; busca <strong>Administrador de credenciales</strong> &rarr; <strong>Credenciales de Windows</strong> &rarr; sección <em>Credenciales genéricas</em> &rarr; busca <code class="inline">git:https://github.com</code> &rarr; haz clic en <strong>Quitar</strong>.
+        </li>
+        <li>
+          <strong>Volver a hacer Push:</strong><br>
+          Ejecuta nuevamente:
+          <pre style="border-left-color: var(--danger);"><code>git push origin master</code></pre>
+          - Si abre ventana: selecciona <em>"Sign in with your browser"</em> o ingresa el Token generado.<br>
+          - Si lo pide en consola: Usuario = tu usuario de GitHub; Contraseña = pega el <strong>Token</strong>.
+        </li>
+      </ol>
+      <div class="alert alert-success">
+        Al hacer refresh en GitHub, ¡verás todo tu repositorio local subido correctamente al remoto!
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-header">
+        <span class="step-badge">⬇️</span>
+        <h3>Bajar cambios del remoto al local (Git Pull)</h3>
+      </div>
+      <p>Para probar la sincronización inversa, agregamos un archivo <code class="inline">README.md</code> directamente en la web de GitHub.</p>
+      <p>Luego, para traer y fusionar esos cambios al repositorio local:</p>
+      <pre><code>git pull origin master</code></pre>
+      <p>Al completarse, verás cómo aparece automáticamente el <code class="inline">README.md</code> en tu proyecto local de VS Code.</p>
+    </div>
+
+  </div>
+
+</body>
+</html>
